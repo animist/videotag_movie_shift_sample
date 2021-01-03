@@ -45,6 +45,10 @@
                 opacity: 1;
             }
 
+            #controls {
+                display: none;
+            }
+
             .button {
                 height: 80px;
                 width: 150px;
@@ -53,6 +57,14 @@
         </style>
         <script type="text/javascript">
             var activeMovieId = 0;
+            var loadedVideos = 0;
+
+            function activateUI() {
+                c = document.getElementById("controls");
+                c.style.setProperty("display", "block");
+                m = document.getElementById("message");
+                m.style.setProperty("display", "none");
+            }
 
             function playPauseActive() {
                 v = document.getElementById("video-" + activeMovieId);
@@ -88,13 +100,16 @@
         </script>
     </head>
     <div id="video">
-        <video id="video-0" class="fadein" width="1280" height="720" src="movie/back0.mp4"></video>
-        <video id="video-1" class="fadeout" width="1280" height="720" src="movie/back1.mp4"></video>
-        <video id="video-2" class="fadeout" width="1280" height="720" src="movie/back2.mp4"></video>
-        <video id="video-3" class="fadeout" width="1280" height="720" src="movie/back3.mp4"></video>
-        <video id="video-4" class="fadeout" width="1280" height="720" src="movie/back4.mp4"></video>
+        <video id="video-0" class="fadein" width="1280" height="720" src="movie/back0.mp4" preload="metadata"></video>
+        <video id="video-1" class="fadeout" width="1280" height="720" src="movie/back1.mp4" preload="metadata"></video>
+        <video id="video-2" class="fadeout" width="1280" height="720" src="movie/back2.mp4" preload="metadata"></video>
+        <video id="video-3" class="fadeout" width="1280" height="720" src="movie/back3.mp4" preload="metadata"></video>
+        <video id="video-4" class="fadeout" width="1280" height="720" src="movie/back4.mp4" preload="metadata"></video>
     </div>
 
+    <div id="message">
+        Loading Videos ...
+    </div>
     <div id="controls">
         <button class="button" id="playpause" name="playPause" onclick="playPauseActive()">Play</button>
         <button class="button" name="activate0" onclick="changeActive(0)">1</button>
@@ -103,4 +118,16 @@
         <button class="button" name="activate3" onclick="changeActive(3)">4</button>
         <button class="button" name="activate4" onclick="changeActive(4)">5</button>
     </div>
+    <script type="text/javascript">
+        videos = document.getElementsByTagName("video")
+        for (var i = 0; i < videos.length; i++){
+            videos[i].addEventListener('loadeddata', (event) => {
+                loadedVideos++;
+                console.log("loaded");
+                if (loadedVideos == videos.length) {
+                    activateUI();
+                }
+            });
+        }
+    </script>
 </html>
