@@ -1,0 +1,209 @@
+<html>
+    <head>
+        <style>
+            #video {
+                width: 1300px;
+                height: 740px;
+            }
+
+            #video_0 {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+            }
+
+            #video_1 {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                display: none;
+            }
+
+            #video_2 {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                display: none;
+            }
+
+            #video_3 {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                display: none;
+            }
+
+            #video_4 {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                display: none;
+            }
+
+            .fadeout {
+                transition: all 0.5s;
+                opacity: 0;
+            }
+
+            .fadein {
+                transition: all 0.5s;
+                opacity: 1;
+            }
+
+            #controls {
+                display: none;
+            }
+
+            .button {
+                height: 80px;
+                width: 150px;
+                font-size: 30px;
+            }
+        </style>
+        <script type="text/javascript">
+            var activeMovieId = 0;
+            var loadedVideos = 0;
+            var youtubeIds = ["VszQ_L_vUHg", "HWW2C_WSVVQ", "hvoASnlF6AQ", "n2hjTHT0JM8", "cM2fZgJiXH8"];
+            var ytplayers = [];
+            var enableFade = true;
+
+            function onPlayerReady() {
+                loadedVideos++;
+                if (loadedVideos == youtubeIds.length) {
+                    activateUI();
+                }
+            }
+
+            function onPlayerStateChange() {
+                if (ytplayers[activeMovieId].getPlayerState == 0){
+                    for (var i = 0; i < youtubeIds.length; i++){
+                        ytplayers[activeMovieId].seekTo(0, true);
+                    }
+                    b = document.getElementById("playpause");
+                    b.innerHTML = "Play";
+                }
+            }
+
+            function activateUI() {
+                c = document.getElementById("controls");
+                c.style.setProperty("display", "block");
+                m = document.getElementById("message");
+                m.style.setProperty("display", "none");
+            }
+
+            function playPauseActive() {
+                if(ytplayers[activeMovieId].getPlayerState() != 1){
+                    ytplayers[activeMovieId].playVideo();
+                    b = document.getElementById("playpause");
+                    b.innerHTML = "Pause";
+                } else {
+                    ytplayers[activeMovieId].pauseVideo();
+                    b = document.getElementById("playpause");
+                    b.innerHTML = "Play";
+                }
+            }
+
+            function changeActive(_amv) {
+                if (_amv == activeMovieId) return;
+
+                cv = document.getElementById("video-" + activeMovieId);
+                cvd = document.getElementById("video_" + activeMovieId);
+                nv = document.getElementById("video-" + _amv);
+                nvd = document.getElementById("video_" + _amv);
+                nvd.style.setProperty("display", "block");
+                isPlaying = ytplayers[activeMovieId].getPlayerState() == 1;
+                prevMovieId = activeMovieId;
+                activeMovieId = _amv;
+
+                cv.classList.remove("fadein")
+                nv.classList.remove("fadeout")
+
+                if (isPlaying) {
+                    ytplayers[prevMovieId].pauseVideo();
+                    ytplayers[activeMovieId].seekTo(ytplayers[prevMovieId].getCurrentTime(), true);
+                    ytplayers[activeMovieId].playVideo();
+                }
+                if (enableFade) {
+                    cv.classList.add("fadeout")
+                    nv.classList.add("fadein")
+                } else {
+                    nvd.style.setProperty("display", "block");
+                }
+
+                cvd.style.setProperty("display", "none");
+            }
+
+            function toggleCrossfade() {
+                cbx = document.getElementById("crossfade");
+                enableFade = cbx.checked;
+                for (var i = 0; i < ytplayers.length; i++){
+                    vs = document.getElementById("video-" + i);
+                    vd = document.getElementById("video_" + i);
+
+                    vs.classList.remove("fadeout", "fadein");
+                    if (i == activeMovieId) {
+                        vd.style.setProperty("display", "block");
+                        if (enableFade) vs.classList.add("fadein");
+                    } else {
+                        if (enableFade) vs.classList.add("fadeout");
+                        vd.style.setProperty("display", "none");
+                    }
+                }
+           }
+        </script>
+    </head>
+    <div id="video">
+        <!--<iframe width="1280" height="720" src="https://www.youtube.com/embed/VszQ_L_vUHg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>-->
+        <!--
+        <iframe id="video-0" class="fadein" width="1280" height="720" src="https://www.youtube.com/embed/VszQ_L_vUHg?controls=0&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="video-1" class="fadeout" width="1280" height="720" src="https://www.youtube.com/embed/HWW2C_WSVVQ?controls=0&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="video-2" class="fadeout" width="1280" height="720" src="https://www.youtube.com/embed/hvoASnlF6AQ?controls=0&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="video-3" class="fadeout" width="1280" height="720" src="https://www.youtube.com/embed/n2hjTHT0JM8?controls=0&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="video-4" class="fadeout" width="1280" height="720" src="https://www.youtube.com/embed/cM2fZgJiXH8?controls=0&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        -->
+        <span id="video-0" class="fadein"><div id="video_0"></div></span>
+        <span id="video-1" class="fadeout"><div id="video_1"></div></span>
+        <span id="video-2" class="fadeout"><div id="video_2"></div></span>
+        <span id="video-3" class="fadeout"><div id="video_3"></div></span>
+        <span id="video-4" class="fadeout"><div id="video_4"></div></span>
+    </div>
+
+    <div id="message">
+        Loading Videos ...
+    </div>
+    <div id="controls">
+        <button class="button" id="playpause" name="playPause" onclick="playPauseActive()">Play</button>
+        <button class="button" name="activate0" onclick="changeActive(0)">1</button>
+        <button class="button" name="activate1" onclick="changeActive(1)">2</button>
+        <button class="button" name="activate2" onclick="changeActive(2)">3</button>
+        <button class="button" name="activate3" onclick="changeActive(3)">4</button>
+        <button class="button" name="activate4" onclick="changeActive(4)">5</button>
+
+        <input type="checkbox" checked="checked" id="crossfade" onchange="toggleCrossfade()"> Enable crossfade
+    </div>
+    <script type="text/javascript">
+        var tag = document.createElement('script');
+
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        
+        function onYouTubeIframeAPIReady() {
+            for (var i = 0; i < youtubeIds.length; i++){
+                ytplayers[i] = new YT.Player('video_' + i, {
+                    width: '1280',
+                    height: '720',
+                    videoId: youtubeIds[i],
+                    playerVars: {
+                        rel: '0',
+                        controls: '0'
+                    },
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                })
+            }
+        }
+    </script>
+</html>

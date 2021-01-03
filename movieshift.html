@@ -58,6 +58,7 @@
         <script type="text/javascript">
             var activeMovieId = 0;
             var loadedVideos = 0;
+            var enableFade = true;
 
             function activateUI() {
                 c = document.getElementById("controls");
@@ -94,9 +95,39 @@
                 if (isPlaying) cv.pause();
                 nv.currentTime = cv.currentTime;
                 if (isPlaying) nv.play();
-                cv.classList.add("fadeout")
-                nv.classList.add("fadein")
+                if (enableFade) {
+                    cv.classList.add("fadeout")
+                    nv.classList.add("fadein")
+                } else {
+                    cv.style.setProperty("opacity", 0);
+                    nv.style.setProperty("opacity", 1);
+                }
             }
+
+            function toggleCrossfade() {
+                cbx = document.getElementById("crossfade");
+                enableFade = cbx.checked;
+                videos = document.getElementsByTagName("video")
+                if (enableFade) {
+                    for (var i = 0; i < videos.length; i++){
+                        videos[i].style.removeProperty("opacity");
+                        if (i == activeMovieId) {
+                            videos[i].classList.add("fadein");
+                        } else {
+                            videos[i].classList.add("fadeout");
+                        }
+                    }
+                } else {
+                    for (var i = 0; i < videos.length; i++){
+                        videos[i].classList.remove("fadeout", "fadein");
+                        if (i == activeMovieId) {
+                            videos[i].style.setProperty("opacity", 1);
+                        } else {
+                            videos[i].style.setProperty("opacity", 0);
+                        }
+                    }
+                }
+           }
         </script>
     </head>
     <div id="video">
@@ -117,6 +148,8 @@
         <button class="button" name="activate2" onclick="changeActive(2)">3</button>
         <button class="button" name="activate3" onclick="changeActive(3)">4</button>
         <button class="button" name="activate4" onclick="changeActive(4)">5</button>
+
+        <input type="checkbox" checked="checked" id="crossfade" onchange="toggleCrossfade()"> Enable crossfade
     </div>
     <script type="text/javascript">
         videos = document.getElementsByTagName("video")
