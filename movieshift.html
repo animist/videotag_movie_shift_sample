@@ -121,12 +121,20 @@
     <script type="text/javascript">
         videos = document.getElementsByTagName("video")
         for (var i = 0; i < videos.length; i++){
-            videos[i].addEventListener('loadeddata', (event) => {
+            videos[i].addEventListener('canplaythrough', (event) => {
                 loadedVideos++;
                 console.log("loaded");
                 if (loadedVideos == videos.length) {
                     activateUI();
                 }
+            });
+
+            videos[i].addEventListener('ended', (event) => {
+                for (var j = 0; j < videos.length; j++){
+                    videos[j].currentTime = 0;
+                }
+                b = document.getElementById("playpause");
+                b.innerHTML = "Play";
             });
         }
     </script>
